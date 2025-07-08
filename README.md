@@ -1,6 +1,6 @@
 # Sistema de Gestão de Desempenho e Geração de Relatórios 🚀🔥
 
-Este sistema foi desenvolvido para otimizar a gestão de lojas e análise de desempenho, permitindo a geração de relatórios dinâmicos, gerenciamento eficiente de dados e uma visão analítica clara das operações. Com um banco de dados integrado e uma interface intuitiva, ele é ideal para empresas que buscam melhorar a performance e otimizar seus processos diários.
+Este sistema foi desenvolvido para monitoramento de desempenho de lojas, focando na análise de vendas, conversões e métricas de performance. Ele permite a criação de relatórios dinâmicos, a visualização de dados em dashboards analíticos e a gestão de lojas de maneira eficiente e prática. A solução oferece flexibilidade e integração, podendo ser expandida para integrar outros sistemas e ampliar a análise e comunicação de dados.
 
 # Principais Funcionalidades:
 
@@ -17,6 +17,14 @@ Cálculo de Taxa de Conversão: Cálculo automático da taxa de conversão para 
 Integração com Bluve: Sincronização contínua de dados com a plataforma Bluve para garantir insights em tempo real. 🔗
 
 Escalabilidade: Prepare o sistema para rodar em servidores ou em uma rede LAN local. 🌐
+
+# Controle de Acesso:
+
+Login Diferenciado: Sistema com painel de login, permitindo o controle de permissões.
+
+Admins têm acesso completo aos relatórios, dashboards e funcionalidades de gestão.
+
+Usuários comuns têm acesso restrito, com visualização limitada conforme as permissões. 🔒
 
 # Benefícios:
 
