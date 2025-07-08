@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Lojas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Sistema de Relatórios</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-file-earmark-plus"></i> Novo Relatório</a></li>
+                <li class="nav-item"><a class="nav-link" href="/consulta"><i class="bi bi-search"></i> Consultar</a></li>
+                <li id="nav-demandas" class="nav-item d-none"><a class="nav-link" href="/demandas"><i class="bi bi-card-checklist"></i> Demandas</a></li>
+                <li id="nav-gerenciar" class="nav-item d-none"><a class="nav-link" href="/gerenciar-lojas"><i class="bi bi-shop-window"></i> Lojas</a></li>
+                <li id="nav-admin" class="nav-item d-none"><a class="nav-link" href="/admin"><i class="bi bi-speedometer2"></i> Painel</a></li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <button class="btn btn-sm btn-outline-light me-3" onclick="window.open('/live', 'janelaLive', 'width=600,height=900,scrollbars=yes,resizable=yes')" title="Abrir Janela Live">
+                    <i class="bi bi-window-split"></i> Live
+                </button>
+                <div id="user-info" class="d-flex align-items-center"></div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header"><h4 id="form-titulo">Adicionar Nova Loja</h4></div>
+                    <div class="card-body">
+                        <form id="form-loja">
+                            <input type="hidden" id="edit-loja-id" name="id">
+                            <div class="mb-3"><label for="nome-loja" class="form-label">Nome da Loja</label><input type="text" id="nome-loja" name="nome" class="form-control" required></div>
+                            <div class="mb-3"><label for="funcao-especial" class="form-label">Grupo / Função</label><select id="funcao-especial" name="funcao_especial" class="form-select"><option value="nenhuma" selected>Nenhuma</option><option value="Omni">Omni</option><option value="Busca por Assist. Tec.">Busca por Assist. Tec.</option></select></div>
+                            <div class="mb-3"><label for="observacoes-loja" class="form-label">Observações</label><textarea id="observacoes-loja" name="observacoes" class="form-control" rows="2"></textarea></div>
+                            <hr>
+                            <h6>Metas de Conversão (%)</h6>
+                            <div class="row">
+                                <div class="col"><label for="meta_tx_loja" class="form-label">Loja (Bluve)</label><input type="number" id="meta_tx_loja" name="meta_tx_loja" class="form-control" value="20" step="0.1" required></div>
+                                <div class="col"><label for="meta_tx_monitoramento" class="form-label">Monitoramento</label><input type="number" id="meta_tx_monitoramento" name="meta_tx_monitoramento" class="form-control" value="15" step="0.1" required></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mt-3">Salvar</button>
+                            <button type="button" id="btn-cancelar-edicao" class="btn btn-secondary w-100 mt-2" style="display:none;">Cancelar Edição</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <h3>Lojas Cadastradas</h3>
+                <div class="table-responsive"><table class="table table-striped"><thead><tr><th>Nome</th><th>Função</th><th>Meta Loja</th><th>Meta Monit.</th><th>Ações</th></tr></thead><tbody id="lista-lojas"></tbody></table></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const form = document.getElementById('form-loja');
+        const listaLojas = document.getElementById('lista-lojas');
+        const editIdInput = document.getElementById('edit-loja-id');
+        const formTitulo = document.getElementById('form-titulo');
+        const btnCancelar = document.getElementById('btn-cancelar-edicao');
+        let lojasCache = [];
+
+        async function carregarLojas() {
+            const response = await fetch('/api/lojas');
+            lojasCache = await response.json();
+            listaLojas.innerHTML = '';
+            lojasCache.forEach(loja => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${loja.nome}</td><td>${loja.funcao_especial || 'Nenhuma'}</td><td>${loja.meta_tx_loja}%</td><td>${loja.meta_tx_monitoramento}%</td><td><div class="btn-group"><button class="btn btn-warning btn-sm" onclick="editarLoja(${loja.id})">Editar</button><button class="btn btn-danger btn-sm" onclick="deletarLoja(${loja.id})">Deletar</button></div></td>`;
+                listaLojas.appendChild(tr);
+            });
+        }
+        function editarLoja(id) {
+            const loja = lojasCache.find(l => l.id === id);
+            form.nome.value = loja.nome;
+            form.funcao_especial.value = loja.funcao_especial || 'nenhuma';
+            form.observacoes.value = loja.observacoes || '';
+            form.meta_tx_loja.value = loja.meta_tx_loja;
+            form.meta_tx_monitoramento.value = loja.meta_tx_monitoramento;
+            editIdInput.value = id;
+            formTitulo.textContent = "Editar Loja";
+            btnCancelar.style.display = 'block';
+        }
+        btnCancelar.addEventListener('click', () => { form.reset(); editIdInput.value = ''; formTitulo.textContent = "Adicionar Nova Loja"; btnCancelar.style.display = 'none'; });
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = editIdInput.value;
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/api/lojas/${id}` : '/api/lojas';
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+            if (!response.ok) { alert('Erro: O nome da loja já pode existir.'); }
+            else { btnCancelar.click(); carregarLojas(); }
+        });
+        async function deletarLoja(id) { if (confirm('Deletar esta loja?')) { await fetch(`/api/lojas/${id}`, { method: 'DELETE' }); carregarLojas(); } }
+        document.addEventListener('DOMContentLoaded', carregarLojas);
+    </script>
+    <script src="/navbar-logic.js" defer></script>
+</body>
+</html>

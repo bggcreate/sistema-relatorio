@@ -1,0 +1,24 @@
+060 LOFT STORE
+
+DATA: 01/07/2025
+
+Clientes: 40
+Bluve: 34
+Vendas / Monitoramento: 11
+Vendas / Loja: 11
+Taxa de conversão da loja: 32.35%
+Taxa de conversão do monitoramento: 27.50%
+
+Abertura: 09:56 - 22:00
+Gerente: 12:19 - 20:16
+Vendas em Cartão: 8
+Vendas em Pix: 1
+Vendas em Dinheiro: 2
+Total vendas: 11
+Troca/Devolução: 1
+Busca por Assist. Tec.: 3
+
+Desempenho Equipe:
+Gabriele: 15 Atendimentos / 4 Vendas / Taxa de conversão: 26.67%
+Sabrina: 9 Atendimentos / 3 Vendas / Taxa de conversão: 33.33%
+Luiz: 16 Atendimentos / 4 Vendas / Taxa de conversão: 25.00%

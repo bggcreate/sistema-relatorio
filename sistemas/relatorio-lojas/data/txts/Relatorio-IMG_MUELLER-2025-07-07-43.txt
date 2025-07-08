@@ -1,0 +1,24 @@
+IMG MUELLER
+
+DATA: 07/07/2025
+
+Clientes: 57
+Bluve: 43
+Vendas / Monitoramento: 12
+Vendas / Loja: 11
+Taxa de conversão da loja: 25.58%
+Taxa de conversão do monitoramento: 21.05%
+
+Abertura: 09:40 - 21:55
+Gerente: 11:47 - 19:56
+Vendas em Cartão: 0
+Vendas em Pix: 0
+Vendas em Dinheiro: 0
+Total vendas: 0
+Troca/Devolução: 1
+Omni: 0
+
+Desempenho Equipe:
+Ana C: 19 Atendimentos / 5 Vendas / Taxa de conversão: 26.32%
+Eduarda: 22 Atendimentos / 5 Vendas / Taxa de conversão: 22.73%
+Ana K: 16 Atendimentos / 2 Vendas / Taxa de conversão: 12.50%

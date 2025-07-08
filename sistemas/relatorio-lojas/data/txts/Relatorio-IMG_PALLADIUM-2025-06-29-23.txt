@@ -1,0 +1,25 @@
+IMG PALLADIUM
+
+DATA: 29/06/2025
+
+Clientes: 62
+Bluve: 46
+Vendas / Monitoramento: 20
+Vendas / Loja: 20
+Taxa de conversão da loja: 43.48%
+Taxa de conversão do monitoramento: 32.26%
+
+Abertura: 09:50 - 21:45
+Gerente: 12:28 - 20:18
+Vendas em Cartão: 0
+Vendas em Pix: 0
+Vendas em Dinheiro: 1
+Total vendas: 1
+Troca/Devolução: 0
+Omni: 0
+
+Desempenho Equipe:
+Priscila: 15 Atendimentos / 8 Vendas / Taxa de conversão: 53.33%
+Zhandra: 16 Atendimentos / 4 Vendas / Taxa de conversão: 25.00%
+Ingrid: 16 Atendimentos / 5 Vendas / Taxa de conversão: 31.25%
+Kauany: 15 Atendimentos / 3 Vendas / Taxa de conversão: 20.00%

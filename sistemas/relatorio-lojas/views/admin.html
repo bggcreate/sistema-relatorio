@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Comando</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <!-- Bibliotecas para gerar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+</head>
+<body>
+    <!-- Navbar específica do Admin -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/admin"><i class="bi bi-speedometer2 me-2" style="color: var(--cor-primaria);"></i>Painel de Comando</a>
+            <div class="d-flex align-items-center">
+                <a href="/" class="btn btn-sm btn-outline-secondary me-2" title="Ir para Relatórios"><i class="bi bi-file-earmark-plus"></i></a>
+                <button class="btn btn-sm btn-outline-info me-2" id="btn-insights" title="Ver Insights Rápidos"><i class="bi bi-lightbulb-fill"></i></button>
+                <a href="/backup-db" class="btn btn-sm btn-outline-secondary me-2" title="Baixar Backup do Banco de Dados"><i class="bi bi-database-down"></i></a>
+                <a href="/gerenciar-lojas" class="btn btn-sm btn-outline-secondary me-2" title="Gerenciar Lojas"><i class="bi bi-gear-fill"></i></a>
+                <div id="user-info" class="d-flex align-items-center"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-fluid mt-4">
+        <div class="row">
+            <!-- Coluna Principal de Análise -->
+            <div class="col-lg-8 mb-4">
+                <!-- Filtros e Exportações -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3 align-items-end mb-3">
+                            <div class="col-lg-3 col-md-6"><label for="filtro-loja" class="form-label">Loja</label><select id="filtro-loja" class="form-select"><option value="todas">Todas as Lojas</option></select></div>
+                            <div class="col-lg-2 col-md-6"><label for="data-inicio" class="form-label">De:</label><input type="date" id="data-inicio" class="form-control"></div>
+                            <div class="col-lg-2 col-md-6"><label for="data-fim" class="form-label">Até:</label><input type="date" id="data-fim" class="form-control"></div>
+                            <div class="col-lg-2 col-md-6"><label class="form-label"> </label><button id="btn-filtrar" class="btn btn-primary w-100">Analisar</button></div>
+                            <div class="col-lg-3">
+                                <label class="form-label">Exportar</label>
+                                <div class="btn-group w-100">
+                                    <button id="btn-excel" class="btn btn-outline-success" title="Gerar Relatório Excel do Mês Atual"><i class="bi bi-file-earmark-excel-fill"></i> Excel</button>
+                                    <button id="btn-pdf" class="btn btn-outline-danger" title="Baixar Visão Atual em PDF"><i class="bi bi-file-earmark-pdf-fill"></i> PDF</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- KPIs e Rankings -->
+                <div id="dashboard-content">
+                    <h4 class="mb-3" id="dashboard-titulo">Dashboard Geral</h4>
+                    <div class="row">
+                        <div class="col-lg-6 mb-4"><div class="card h-100"><div class="card-header"><h6><i class="bi bi-camera-video-fill"></i> Monitoramento</h6></div><div class="card-body"><div class="row"><div class="col-6 mb-3"><div class="card kpi-card text-center"><div class="card-body" id="kpi-clientes-monit">-</div><div class="card-footer">Clientes</div></div></div><div class="col-6 mb-3"><div class="card kpi-card text-center"><div class="card-body" id="kpi-vendas-monit">-</div><div class="card-footer">Vendas</div></div></div><div class="col-12"><div class="card kpi-card text-center bg-info text-white"><div class="card-body" id="kpi-tx-monit">- %</div><div class="card-footer">Taxa de Conversão</div></div></div></div></div></div></div>
+                        <div class="col-lg-6 mb-4"><div class="card h-100"><div class="card-header"><h6><i class="bi bi-shop"></i> Loja (Bluve)</h6></div><div class="card-body"><div class="row"><div class="col-6 mb-3"><div class="card kpi-card text-center"><div class="card-body" id="kpi-clientes-loja">-</div><div class="card-footer">Clientes</div></div></div><div class="col-6 mb-3"><div class="card kpi-card text-center"><div class="card-body" id="kpi-vendas-loja">-</div><div class="card-footer">Vendas</div></div></div><div class="col-12"><div class="card kpi-card text-center bg-success text-white"><div class="card-body" id="kpi-tx-loja">- %</div><div class="card-footer">Taxa de Conversão</div></div></div></div></div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna de Demandas e Anotações -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header"><h5><i class="bi bi-card-checklist"></i> Anotações & Demandas</h5></div>
+                    <div class="card-body">
+                        <form id="form-demanda">
+                            <div class="mb-2"><textarea id="demanda-descricao" class="form-control" rows="2" placeholder="Descreva a demanda ou anotação..." required></textarea></div>
+                            <div class="row g-2">
+                                <div class="col-6"><select id="demanda-loja" class="form-select"><option value="">Geral</option></select></div>
+                                <div class="col-6"><select id="demanda-tag" class="form-select"><option value="rotina">Rotina</option><option value="urgente">Urgente</option></select></div>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-primary w-100 mt-2">Adicionar</button>
+                        </form>
+                    </div>
+                    <ul class="list-group list-group-flush" id="lista-demandas"></ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Insights -->
+    <div class="modal fade" id="modalInsights" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-lightbulb-fill"></i> Insights Rápidos</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="insights-body"></div></div></div></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/navbar-logic.js" defer></script>
+    <script>
+        // --- ELEMENTOS DO DOM ---
+        const filtroLoja = document.getElementById('filtro-loja');
+        const dataInicioEl = document.getElementById('data-inicio');
+        const dataFimEl = document.getElementById('data-fim');
+        const btnFiltrar = document.getElementById('btn-filtrar');
+        const btnPdf = document.getElementById('btn-pdf');
+        const btnExcel = document.getElementById('btn-excel');
+        const formDemanda = document.getElementById('form-demanda');
+        const listaDemandas = document.getElementById('lista-demandas');
+        const demandaLojaSelect = document.getElementById('demanda-loja');
+        const modalInsights = new bootstrap.Modal(document.getElementById('modalInsights'));
+
+        // --- FUNÇÕES DE LÓGICA ---
+        function formatDate(date) { return date.toISOString().split('T')[0]; }
+
+        // **CORREÇÃO APLICADA AQUI:** Esta função agora está dentro do script do admin.html
+        async function carregarLojasFiltro() {
+            try {
+                const response = await fetch('/api/lojas');
+                const lojas = await response.json();
+                // Popula o filtro principal
+                lojas.forEach(loja => {
+                    const option = document.createElement('option');
+                    option.value = loja.nome;
+                    option.textContent = loja.nome;
+                    filtroLoja.appendChild(option);
+                });
+                // Popula o seletor de lojas das demandas
+                lojas.forEach(loja => {
+                    const option = document.createElement('option');
+                    option.value = loja.nome;
+                    option.textContent = loja.nome;
+                    demandaLojaSelect.appendChild(option);
+                });
+            } catch (e) {
+                console.error("Erro ao carregar lojas para os filtros", e);
+            }
+        }
+        
+        async function carregarDashboardData() {
+            const loja = filtroLoja.value;
+            const dataInicio = dataInicioEl.value;
+            const dataFim = dataFimEl.value;
+            if (!dataInicio || !dataFim) { alert("Por favor, selecione um período de data."); return; }
+            document.getElementById('dashboard-titulo').textContent = `Dashboard ${loja === 'todas' ? 'Geral' : loja}`;
+            const response = await fetch(`/api/dashboard-data?loja=${loja}&data_inicio=${dataInicio}&data_fim=${dataFim}`);
+            const data = await response.json();
+            document.getElementById('kpi-clientes-monit').textContent = data.total_clientes_monitoramento;
+            document.getElementById('kpi-vendas-monit').textContent = data.total_vendas_monitoramento;
+            document.getElementById('kpi-tx-monit').textContent = `${data.tx_conversao_monitoramento} %`;
+            document.getElementById('kpi-clientes-loja').textContent = data.total_clientes_loja;
+            document.getElementById('kpi-vendas-loja').textContent = data.total_vendas_loja;
+            document.getElementById('kpi-tx-loja').textContent = `${data.tx_conversao_loja} %`;
+        }
+        
+        async function carregarDemandas() {
+            const response = await fetch('/api/demandas');
+            const demandas = await response.json();
+            listaDemandas.innerHTML = '';
+            if (demandas.length === 0) { listaDemandas.innerHTML = '<li class="list-group-item text-center text-muted">Nenhuma demanda pendente.</li>'; return; }
+            demandas.forEach(d => {
+                const tagClass = d.tag === 'urgente' ? 'tag-urgente' : 'tag-rotina';
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-start demanda-item';
+                li.innerHTML = `<div class="ms-2 me-auto"><div class="fw-bold">${d.loja_nome || 'Geral'} <span class="badge rounded-pill ${tagClass}">${d.tag}</span></div>${d.descricao}</div><div class="btn-group"><button class="btn btn-sm btn-outline-success" onclick="concluirDemanda(${d.id})" title="Concluir"><i class="bi bi-check-lg"></i></button><button class="btn btn-sm btn-outline-danger" onclick="deletarDemanda(${d.id})" title="Deletar"><i class="bi bi-trash"></i></button></div>`;
+                listaDemandas.appendChild(li);
+            });
+        }
+        
+        // --- O resto das funções permanecem as mesmas ---
+        async function concluirDemanda(id) { await fetch(`/api/demandas/${id}`, { method: 'PUT' }); carregarDemandas(); }
+        async function deletarDemanda(id) { if (confirm('Deletar esta demanda?')) { await fetch(`/api/demandas/${id}`, { method: 'DELETE' }); carregarDemandas(); } }
+        function baixarPDF() { const { jsPDF } = window.jspdf; const dashboard = document.getElementById('dashboard-content'); const titulo = document.getElementById('dashboard-titulo').textContent; html2canvas(dashboard).then(canvas => { const imgData = canvas.toDataURL('image/png'); const pdf = new jsPDF('p', 'mm', 'a4'); const imgProps = pdf.getImageProperties(imgData); const pdfWidth = pdf.internal.pageSize.getWidth(); const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width; pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight); pdf.save(`${titulo.replace(/ /g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`); }); }
+        function gerarExcel() { const hoje = new Date(); const mes = hoje.getMonth() + 1; const ano = hoje.getFullYear(); window.location.href = `/api/export-excel?month=${mes}&year=${ano}`; }
+
+        // --- INICIALIZAÇÃO E EVENTOS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Define o período padrão para o mês atual
+            const hoje = new Date();
+            dataFimEl.value = formatDate(hoje);
+            dataInicioEl.value = formatDate(new Date(hoje.getFullYear(), hoje.getMonth(), 1));
+
+            carregarLojasFiltro(); // CORREÇÃO: Chama a função para carregar as lojas
+            carregarDashboardData();
+            carregarDemandas();
+        });
+        
+        btnFiltrar.addEventListener('click', carregarDashboardData);
+        formDemanda.addEventListener('submit', async (e) => { e.preventDefault(); const data = { descricao: document.getElementById('demanda-descricao').value, loja_nome: document.getElementById('demanda-loja').value, tag: document.getElementById('demanda-tag').value }; await fetch('/api/demandas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); formDemanda.reset(); carregarDemandas(); });
+        document.getElementById('btn-insights').addEventListener('click', async () => { const response = await fetch('/api/insights'); const insights = await response.json(); const body = document.getElementById('insights-body'); body.innerHTML = ''; if (insights.length === 0) { body.innerHTML = '<p class="text-center">Nenhum relatório recente encontrado.</p>'; } else { const list = document.createElement('ul'); list.className = 'list-group'; insights.forEach(i => { const li = document.createElement('li'); li.className = `list-group-item d-flex justify-content-between align-items-center`; li.innerHTML = `<div><strong>${i.loja}</strong><br><small>Atual: ${i.tx_atual}% | Meta: ${i.meta}%</small></div> <span class="badge bg-${i.cor} rounded-pill">${i.status}</span>`; list.appendChild(li); }); body.appendChild(list); } modalInsights.show(); });
+        btnPdf.addEventListener('click', baixarPDF);
+        btnExcel.addEventListener('click', gerarExcel);
+    </script>
+</body>
+</html>

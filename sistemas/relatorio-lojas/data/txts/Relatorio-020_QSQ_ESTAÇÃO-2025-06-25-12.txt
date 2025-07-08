@@ -1,0 +1,24 @@
+020 QSQ ESTAÇÃO
+
+DATA: 25/06/2025
+
+Clientes: 27
+Bluve: 11
+Vendas / Monitoramento: 3
+Vendas / Loja: 3
+Taxa de conversão da loja: 27.27%
+Taxa de conversão do monitoramento: 11.11%
+
+Abertura: 10:02 - 21:53
+Gerente: 12:11 - 20:00
+Vendas em Cartão: 3
+Vendas em Pix: 0
+Vendas em Dinheiro: 0
+Total vendas: 3
+Troca/Devolução: 0
+Busca por Assist. Tec.: 0
+
+Desempenho Equipe:
+Samuel: 10 Atendimentos / 1 Vendas / Taxa de conversão: 10.00%
+Gustavo: 9 Atendimentos / 2 Vendas / Taxa de conversão: 22.22%
+Vitor: 8 Atendimentos / 0 Vendas / Taxa de conversão: 0.00%

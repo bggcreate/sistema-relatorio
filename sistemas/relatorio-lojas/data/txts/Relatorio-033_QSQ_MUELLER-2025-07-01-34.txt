@@ -1,0 +1,23 @@
+033 QSQ MUELLER
+
+DATA: 01/07/2025
+
+Clientes: 41
+Bluve: 16
+Vendas / Monitoramento: 14
+Vendas / Loja: 15
+Taxa de conversão da loja: 93.75%
+Taxa de conversão do monitoramento: 34.15%
+
+Abertura: 09:48 - 21:53
+Gerente: 14:17 - 21:53
+Vendas em Cartão: 11
+Vendas em Pix: 1
+Vendas em Dinheiro: 1
+Total vendas: 13
+Troca/Devolução: 2
+Busca por Assist. Tec.: 1
+
+Desempenho Equipe:
+Hudson: 24 Atendimentos / 8 Vendas / Taxa de conversão: 33.33%
+Felipe: 17 Atendimentos / 5 Vendas / Taxa de conversão: 29.41%

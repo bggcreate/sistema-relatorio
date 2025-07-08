@@ -1,0 +1,24 @@
+019 QSQ LOFT
+
+DATA: 26/06/2025
+
+Clientes: 24
+Bluve: 0
+Vendas / Monitoramento: 5
+Vendas / Loja: 0
+Taxa de conversão da loja: 0%
+Taxa de conversão do monitoramento: 20.83%
+
+Abertura: 09:50 - 20:06
+Gerente: 14:50 - 18:44
+Vendas em Cartão: 3
+Vendas em Pix: 0
+Vendas em Dinheiro: 2
+Total vendas: 5
+Troca/Devolução: 0
+Busca por Assist. Tec.: 0
+
+Desempenho Equipe:
+Giovanna: 9 Atendimentos / 2 Vendas / Taxa de conversão: 22.22%
+Leticia: 8 Atendimentos / 1 Vendas / Taxa de conversão: 12.50%
+Juliana: 7 Atendimentos / 2 Vendas / Taxa de conversão: 28.57%

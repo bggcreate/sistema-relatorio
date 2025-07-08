@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Relatórios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid"><a class="navbar-brand" href="/"><i class="bi bi-bar-chart-line-fill me-2" style="color: var(--cor-primaria);"></i>Sistema de Relatórios</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarNav"><ul class="navbar-nav me-auto mb-2 mb-lg-0"><li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-file-earmark-plus"></i> Novo Relatório</a></li><li class="nav-item"><a class="nav-link active" href="/consulta"><i class="bi bi-search"></i> Consultar</a></li><li id="nav-demandas" class="nav-item d-none"><a class="nav-link" href="/demandas"><i class="bi bi-card-checklist"></i> Demandas</a></li><li id="nav-gerenciar" class="nav-item d-none"><a class="nav-link" href="/gerenciar-lojas"><i class="bi bi-shop-window"></i> Lojas</a></li><li id="nav-admin" class="nav-item d-none"><a class="nav-link" href="/admin"><i class="bi bi-speedometer2"></i> Painel</a></li></ul><div class="d-flex align-items-center"><button class="btn btn-sm btn-outline-secondary me-3" onclick="window.open('/live', 'janelaLive', 'width=600,height=900,scrollbars=yes,resizable=yes')" title="Abrir Janela Live"><i class="bi bi-window-split"></i> Live</button><div id="user-info" class="d-flex align-items-center"></div></div></div></div>
+    </nav>
+
+    <main class="container mt-4">
+        <div id="alerta-sucesso" class="alert alert-success d-none" role="alert">Relatório salvo com sucesso!</div>
+        <div class="card">
+            <div class="card-header"><h4><i class="bi bi-search"></i> Relatórios Salvos</h4></div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead><tr><th>ID</th><th>Loja</th><th>Data</th><th class="text-end">Ações</th></tr></thead>
+                        <tbody id="tabela-relatorios"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="modal fade" id="modalDetalhes" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modal-titulo">Detalhes do Relatório</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="modal-corpo"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button></div></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/navbar-logic.js" defer></script>
+    <script>
+        const modalDetalhes = new bootstrap.Modal(document.getElementById('modalDetalhes'));
+        async function carregarRelatorios() {
+            const response = await fetch('/api/relatorios');
+            const { data } = await response.json();
+            const tbody = document.getElementById('tabela-relatorios');
+            tbody.innerHTML = '';
+            if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center p-4">Nenhum relatório encontrado.</td></tr>'; return; }
+            data.forEach(rel => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${rel.id}</td><td>${rel.loja}</td><td>${new Date(rel.data).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</td>
+                    <td class="text-end">
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="verDetalhes(${rel.id})" title="Ver Detalhes"><i class="bi bi-eye"></i></button>
+                            <a href="/relatorios_gerados/${rel.nome_arquivo}" class="btn btn-sm btn-outline-success" download title="Baixar .txt"><i class="bi bi-file-earmark-text"></i></a>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deletarRelatorio(${rel.id})" title="Deletar"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+        async function verDetalhes(id) { const response = await fetch(`/api/relatorio/${id}`); if (!response.ok) { alert('Erro ao buscar detalhes.'); return; } const { relatorio, vendedores } = await response.json(); const modalCorpo = document.getElementById('modal-corpo'); let vendedoresHtml = '<h6>Desempenho da Equipe</h6>'; if (vendedores && vendedores.length > 0) { vendedoresHtml += '<ul class="list-unstyled">'; vendedores.forEach(v => { const tx = v.atendimentos > 0 ? ((v.vendas / v.atendimentos) * 100).toFixed(2) : 0; vendedoresHtml += `<li><strong>${v.nome_vendedor}:</strong> ${v.atendimentos} atend. / ${v.vendas} vendas (Tx: ${tx}%)</li>`; }); vendedoresHtml += '</ul>'; } else { vendedoresHtml += '<p class="text-muted small">Nenhum vendedor registrado.</p>'; } let funcaoEspecialHtml = relatorio.nome_funcao_especial ? `<p><strong>${relatorio.nome_funcao_especial}:</strong> ${relatorio.quantidade_funcao_especial}</p>` : ''; modalCorpo.innerHTML = `<h4>${relatorio.loja} - ${new Date(relatorio.data).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</h4><hr><div class="row"><div class="col-md-6"><p><strong>Clientes (Monitoramento):</strong> ${relatorio.clientes_monitoramento}</p><p><strong>Vendas (Monitoramento):</strong> ${relatorio.vendas_monitoramento}</p><p><strong>Clientes (Loja):</strong> ${relatorio.clientes_loja}</p><p><strong>Vendas (Loja):</strong> ${relatorio.vendas_loja}</p></div><div class="col-md-6"><p><strong>Vendas Cartão:</strong> ${relatorio.vendas_cartao}</p><p><strong>Vendas PIX:</strong> ${relatorio.vendas_pix}</p><p><strong>Vendas Dinheiro:</strong> ${relatorio.vendas_dinheiro}</p><p><strong>Trocas/Devoluções:</strong> ${relatorio.quantidade_trocas}</p></div></div>${funcaoEspecialHtml}<hr>${vendedoresHtml}`; modalDetalhes.show(); }
+        async function deletarRelatorio(id) { if (confirm(`Deletar o relatório ID ${id}?`)) { const response = await fetch(`/api/relatorios/${id}`, { method: 'DELETE' }); if (response.ok) { carregarRelatorios(); } else { alert('Erro ao deletar.'); } } }
+        document.addEventListener('DOMContentLoaded', () => { const params = new URLSearchParams(window.location.search); if (params.get('status') === 'sucesso') { document.getElementById('alerta-sucesso').classList.remove('d-none'); } carregarRelatorios(); });
+    </script>
+</body>
+</html>
